@@ -9,6 +9,7 @@ using Onion.APIs.MiddleWares;
 using Onion.Core.Repositories;
 using Onion.Repository;
 using Onion.Repository.Data;
+using StackExchange.Redis;
 
 namespace Onion.APIs
 {
@@ -26,6 +27,11 @@ namespace Onion.APIs
             builder.Services.AddSwaggerGen();
             builder.Services.AddDbContext<OnionContext>(options => {
                 options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"));
+            });
+            builder.Services.AddSingleton<IConnectionMultiplexer>(option =>
+            {
+                var Connection = builder.Configuration.GetConnectionString("RedisConnection");
+                return ConnectionMultiplexer.Connect(Connection);
             });
             builder.Services.AddAplicationServices();
            var app = builder.Build();

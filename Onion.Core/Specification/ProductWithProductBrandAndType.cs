@@ -11,6 +11,9 @@ namespace Onion.Core.Specification
     public class ProductWithProductBrandAndType:BaseSpecifications<Product>
     {
         public ProductWithProductBrandAndType(ProductSpecParams Params) : base(p=>
+
+        (string.IsNullOrEmpty(Params.Search)||p.Name.ToLower().Contains(Params.Search.ToLower()))
+        &&
         (!Params.BrandId.HasValue||p.ProductBrandId== Params.BrandId)
 
            && 

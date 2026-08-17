@@ -19,6 +19,13 @@ namespace Onion.Core.Specification
         }
         public int PageIndex { get; set; } = 1;
 
+        private string? search;
+
+        public string? Search
+        {
+            get { return search; }
+            set { search = value.ToLower(); }
+        }
 
 
     }

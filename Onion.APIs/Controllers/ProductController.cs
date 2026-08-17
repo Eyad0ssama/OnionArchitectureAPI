@@ -36,13 +36,9 @@ namespace Onion.APIs.Controllers
             var spec = new ProductWithProductBrandAndType(Params);
             var products = await _productRepo.GetAllWithspec(spec);
             var MappedProducts = _mapper.Map<IReadOnlyList<Product>, IReadOnlyList<ProductToReturnDTO>>(products);
-            var ReturnedObject = new Pagination<ProductToReturnDTO>
-            {
-                PageIndex = Params.PageIndex,
-                PageSize = Params.PageSize,
-                Data = MappedProducts
-            };
-            return Ok(MappedProducts);
+            var CountSpec = new ProductWithFiltrationForCountAsync(Params);
+            var Count = await _productRepo.GetCountWithSpecAsync(CountSpec);
+            return Ok(new Pagination<ProductToReturnDTO>(Params.PageIndex, Params.PageSize, MappedProducts,Count));
         }
         [HttpGet("{id}")]
         [ProducesResponseType(typeof(ProductToReturnDTO), StatusCodes.Status404NotFound)]

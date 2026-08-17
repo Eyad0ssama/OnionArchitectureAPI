@@ -45,13 +45,10 @@ namespace Onion.Repository
         
             => await _dbContext.Set<T>().FindAsync(id);
 
-        public Task<T> GetByIdAsync()
-        {
-            throw new NotImplementedException();
-        }
+       
         #endregion
 
-        public async Task<IEnumerable<T>> GetAllWithspec(ISpecification<T> Spec)
+        public async Task<IReadOnlyList<T>> GetAllWithspec(ISpecification<T> Spec)
         {
             return await ApplySpecification(Spec).ToListAsync();
         }
@@ -64,7 +61,10 @@ namespace Onion.Repository
             return SpecificationEvaluator<T>.GetQuery(_dbContext.Set<T>(), Spec);
         }
 
-       
+        public async Task<int> GetCountWithSpecAsync(ISpecification<T> spec)
+        {
+            return await ApplySpecification(spec).CountAsync();
+        }
     }
 }
 

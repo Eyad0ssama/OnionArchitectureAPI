@@ -16,8 +16,10 @@ namespace Onion.Core.Repositories
         #endregion
 
         #region With spec
-        Task<IEnumerable<T>> GetAllWithspec(ISpecification<T> spec );
+        Task<IReadOnlyList<T>> GetAllWithspec(ISpecification<T> spec );
         Task<T> GetByIdWithSpecAsync(ISpecification<T> Spec);
+        Task<int> GetCountWithSpecAsync(ISpecification<T> spec);
+
 
         #endregion
     }
