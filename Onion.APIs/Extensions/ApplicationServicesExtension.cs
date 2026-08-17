@@ -12,6 +12,7 @@ namespace Onion.APIs.Extensions
         public static IServiceCollection AddAplicationServices(this IServiceCollection Services)
         {
             Services.AddScoped(typeof(IBasketRepository), typeof(BasketRepository));
+
             Services.AddScoped(typeof(IGenaricRepository<>), typeof(GenaricRepository<>));
             Services.AddAutoMapper(m => m.AddProfile(new MappingProfile()));
             Services.AddScoped<ProductPictureUrlResolver>();

@@ -1,4 +1,6 @@
 ﻿using AutoMapper;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Onion.APIs.DTOs;
@@ -29,7 +31,7 @@ namespace Onion.APIs.Controllers
         }
 
         //GetAll
-
+        [Authorize(AuthenticationSchemes =JwtBearerDefaults.AuthenticationScheme)]
         [HttpGet]
         public async Task<ActionResult<Pagination<ProductToReturnDTO>>> Getproducts([FromQuery]ProductSpecParams Params)
         {

@@ -1,14 +1,17 @@
 
 using Microsoft.AspNetCore.Diagnostics;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Onion.APIs.Errors;
 using Onion.APIs.Extensions;
 using Onion.APIs.Helper;
 using Onion.APIs.MiddleWares;
+using Onion.Core.Entities.Identity;
 using Onion.Core.Repositories;
 using Onion.Repository;
 using Onion.Repository.Data;
+using Onion.Repository.Identity;
 using StackExchange.Redis;
 
 namespace Onion.APIs
@@ -25,27 +28,46 @@ namespace Onion.APIs
             // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen();
-            builder.Services.AddDbContext<OnionContext>(options => {
-                options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"));
-            });
+            builder.Services.AddDbContext<OnionContext>(
+                options => 
+                {
+                    options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"));
+                }
+            );
             builder.Services.AddSingleton<IConnectionMultiplexer>(option =>
             {
                 var Connection = builder.Configuration.GetConnectionString("RedisConnection");
                 return ConnectionMultiplexer.Connect(Connection);
             });
-            builder.Services.AddAplicationServices();
+
+            builder.Services.AddDbContext<AppIdentityDbContext>(
+                options =>
+                {
+                    options.UseSqlServer(builder.Configuration.GetConnectionString("IdentityConnection"));
+                }
+                );
+            //builder.Services.AddIdentityService();
+            //builder.Services.AddIdentity<AppUser, IdentityRole>().AddEntityFrameworkStores<AppIdentityDbContext>();
+            builder.Services.AddAuthentication();
+             builder.Services.AddAplicationServices();
            var app = builder.Build();
             
-            var Scope = app.Services.CreateScope();
+           using var Scope = app.Services.CreateScope();
             var Services = Scope.ServiceProvider;
             var LoggerFactory = Services.GetRequiredService<ILoggerFactory>();
             try
             {
                 var DbContext = Services.GetRequiredService<OnionContext>();
-                //OnionContext dbContext = new OnionContext();
                 await DbContext.Database.MigrateAsync();
+
+                var IdentityDbContext = Services.GetRequiredService<AppIdentityDbContext>();
+                await IdentityDbContext.Database.MigrateAsync();
+
+                var userManger = Services.GetRequiredService<UserManager<AppUser>>();
+                await AppIdentityDbContextSeed.SeedUserAsynk(userManger);
                 await OnionContextSeed.SeedAsync(DbContext);
-            }catch(Exception ex)
+            }
+            catch(Exception ex)
             {
                 var Logger = LoggerFactory.CreateLogger<Program>();
                 Logger.LogError(ex, "An Error Occeurd During Appling Migration");
@@ -62,6 +84,8 @@ namespace Onion.APIs
 
             app.UseHttpsRedirection();
 
+            app.UseAuthentication();
+            app.UseAuthorization();
            
 
 
