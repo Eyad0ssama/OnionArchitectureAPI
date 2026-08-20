@@ -46,10 +46,10 @@ namespace Onion.APIs
                     options.UseSqlServer(builder.Configuration.GetConnectionString("IdentityConnection"));
                 }
                 );
-            //builder.Services.AddIdentityService();
+            builder.Services.AddIdentityService();
             //builder.Services.AddIdentity<AppUser, IdentityRole>().AddEntityFrameworkStores<AppIdentityDbContext>();
-            builder.Services.AddAuthentication();
-             builder.Services.AddAplicationServices();
+            //builder.Services.AddAuthentication();
+            // builder.Services.AddAplicationServices();
            var app = builder.Build();
             
            using var Scope = app.Services.CreateScope();

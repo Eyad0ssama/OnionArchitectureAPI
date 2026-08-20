@@ -32,7 +32,7 @@ namespace Onion.Services
             {
                 AuthClaims.Add(new Claim(ClaimTypes.Role, Role));
             }
-            var Key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["jwt:Key"]));
+            //var Key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["jwt:Key"]));
             var Authkey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["JWT:Key"]));
             var Token = new JwtSecurityToken(
                 issuer: _configuration["JWT:ValidIssuer"],
