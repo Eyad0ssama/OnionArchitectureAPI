@@ -46,7 +46,7 @@ namespace Onion.APIs
                     options.UseSqlServer(builder.Configuration.GetConnectionString("IdentityConnection"));
                 }
                 );
-            builder.Services.AddIdentityService();
+            builder.Services.AddIdentityService(builder.Configuration);
             //builder.Services.AddIdentity<AppUser, IdentityRole>().AddEntityFrameworkStores<AppIdentityDbContext>();
             //builder.Services.AddAuthentication();
             // builder.Services.AddAplicationServices();
